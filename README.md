@@ -30,8 +30,8 @@ Before using UCS agent, there are some dependencies need to be installed.
  
  There is no need to install ucs_agent, just download it and run it directly.
  
-    $ git clone https://github.com/CiscoZeus/zeus-ingestion-plugins.git
-    $ cd ucs
+    $ git clone https://github.com/CiscoZeus/zeus-ucs-agent
+    $ cd zeus-ucs-agent
     $ python ucs_agent.py # optional arguments specified.
 
 ## Configuration
