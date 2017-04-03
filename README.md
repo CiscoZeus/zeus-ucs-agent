@@ -56,28 +56,32 @@ There are two ways to configure UCS agent, by config.py and CLI. If we don't spe
 * CLI
 
         usage: ucs_agent.py [-h] [-c [UCS]] [-u [USER]] [-p [PASSWORD]] [-s [SECURE]]
-                             [-P [PORT]] [-l [LOG_LEVEL]] [-t [TOKEN]] [-z [ZEUS]]
+                            [-P [PORT]] [-l [LOG_LEVEL]] [-t [TOKEN]] [-z [ZEUS]]
         
         optional arguments:
           -h, --help            show this help message and exit
           -c [UCS], --ucs [UCS]
-                                IP or host name of unified computing system managed server. (default:
-                                0.0.0.0)
+                                IP or host name of unified computing system managed
+                                server. (default: <UCS Manager IP address in double
+                                quotes>)
           -u [USER], --user [USER]
-                                User name of UCS. (default: ucspe)
+                                User name of UCS. (default: <UCS Manager user name in
+                                double quotes>)
           -p [PASSWORD], --password [PASSWORD]
-                                Password of UCS (default: ucspe)
+                                Password of UCS (default: <UCS Manager password in
+                                double quotes>)
           -s [SECURE], --secure [SECURE]
                                 Secure of connection. (default: True)
           -P [PORT], --port [PORT]
                                 Port of TCP socket. (default: 443)
           -l [LOG_LEVEL], --log_level [LOG_LEVEL]
-                                Level of log: CRITICAL, ERROR, WARN, WARNING, INFO,
+                                Level of log: CRITICAL, ERROR, WARN, WARNING,INFO,
                                 DEBUG, NOTSET (default: INFO)
           -t [TOKEN], --token [TOKEN]
                                 Token of ZEUS API.
           -z [ZEUS], --zeus [ZEUS]
-                                IP or host name of ZEUS server. (default: 127.0.0.1)
+                                IP or host name of ZEUS server. (default: <Zeus API
+                                URL in double quotes>)
 
 
 ## Collected Data
