@@ -41,16 +41,16 @@ There are two ways to configure UCS agent, by config.py and CLI. If we don't spe
 
 * Config.py
     
-        UCS = '<UCS Manager IP address in single quotes>'
-        UCS_USER = '<UCS Manager user name in single quotes>'
-        UCS_PASSWD = '<UCS Manager password in single quotes>'
+        UCS = "<UCS Manager IP address in double quotes>"
+        UCS_USER = "<UCS Manager user name in double quotes>"
+        UCS_PASSWD = "<UCS Manager password in double quotes>"
         
         IS_SECURE = True
         PORT = 443
         
-        LOG_LEVEL = 'INFO'
+        LOG_LEVEL = "INFO"
         
-        ZEUS_TOKEN = '<INSERT_TOKEN_HERE>'
+        ZEUS_TOKEN = "<INSERT_TOKEN_HERE>"
         ZEUS_SERVER = "<Zeus API URL in double quotes>"
 
 * CLI
