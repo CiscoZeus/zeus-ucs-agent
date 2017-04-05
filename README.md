@@ -7,7 +7,7 @@ UCS agent supports to collect data from Cisco Unified Computing System managed s
 
 Before using UCS agent, there are some dependencies need to be installed. 
 
-If [pip](https://pip.pypa.io/en/stable/)  has not installed, please [install pip](https://pip.pypa.io/en/stable/installing/) before the rest dependencies.
+If [pip](https://pip.pypa.io/en/stable/)  has not installed, please [install pip](https://pip.pypa.io/en/stable/installing/) before the following dependencies.
 
 * [pycurl](http://pycurl.io/)
 
