@@ -20,7 +20,7 @@ class UCSTest(unittest.TestCase):
     def test_submit(self):
         UCSAgent.get_dn_conf = MagicMock()
         for class_id in class_ids:
-            response = self.ucs_agent.add_log("info", "ucs", msg=dn_dict)
+            response = self.ucs_agent.add_log("info", "ucs", msg=[dn_dict])
             # if name checking is correct, assert the return
             # else, a error will occur
             if response:
