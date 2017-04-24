@@ -47,7 +47,6 @@ class UCSAgent(object):
         self.event_string = ''
 
         self.class_ids = []
-        self.dn_set = set()
         self.fault = ["faultInst"]
 
         self.performance = ["swSystemStats",
@@ -200,7 +199,6 @@ class UCSAgent(object):
             for dn in self.dn_obj_list:
                 dn_config = self.handler.query_dn(dn.value)
                 log_list.append(self.to_json(dn_config))
-                # self.dn_set.add(dn.value)
 
                 # use the self.to_json temporary until ucsmsdk provides this method.
                 self.len = len(log_list)
