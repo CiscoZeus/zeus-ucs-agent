@@ -249,7 +249,8 @@ class UCSAgent(object):
     def unsubscribe_events(self):
         xml_req = ucsmethodfactory.event_unsubscribe(self.handler.cookie)
         res = self.handler.process_xml_elem(xml_req)
-        self.add_log("info", "ucs", msg=self.to_json(res))
+        self.add_log("DEBUG", "ucs", msg=self.to_json(res))
+        self.logger.info("Unsubscribe events of UCSM.")
 
     def event_loop(self):
         # Maintain a client to listen to UCS's async notification.
@@ -268,6 +269,10 @@ class UCSAgent(object):
     def set_up(self):
         # get arguments
         self.args = self.get_args()
+
+        # set log level
+        self.set_log_level(self.args.log_level)
+
         self.host = self.args.ucs
         if self.args.secure == True:
             self.url = 'https://%s/nuova' % self.args.ucs
@@ -279,28 +284,33 @@ class UCSAgent(object):
         self.token = self.args.token
         self.zeus_server = self.args.zeus
 
-        # set log level
-        self.set_log_level(self.args.log_level)
-
         # set up a Zeus client to submit log to Zeus.
+        self.logger.info("Initiating Zeus connection...")
         self.zeus_client = client.ZeusClient(self.token, self.zeus_server)
 
         # set up a http client to UCS server.
+        self.logger.info("Initiating UCSM connection...")
         self.handler = UcsHandle(self.host, self.user, self.passwd,
                                  port=self.args.port, secure=self.args.secure)
         # login to ucs
         self.handler.login(auto_refresh=True)
-        self.add_log("info", "ucs",
+        self.add_log("DEBUG", "ucs",
                      msg={"User": self.user, "Password": self.passwd,
                           "cookie": self.handler.cookie})
+        self.logger.info("Login UCSM completed.")
+
+        self.logger.info("Getting configuration data...")
         self.get_dn_conf()
+
+        self.logger.info("Listening to UCSM events...")
         self.event_loop()
 
     def close(self):
         self.handler.logout()
-        self.add_log('info', "ucs",
+        self.add_log('DEBUG', "ucs",
                      msg={"User": self.user, "Password": self.passwd,
                           "cookie": self.handler.cookie})
+        self.logger.info("UCSM connection is ended.")
 
 
 if __name__ == "__main__":
