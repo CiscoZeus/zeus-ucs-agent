@@ -83,6 +83,8 @@ class UCSAgent(object):
         self.class_ids.extend(self.fault)
         self.class_ids.extend(self.performance)
         self.class_ids.extend(self.inventory)
+        self.count = 0
+        self.len = 0
 
     def get_args(self):
         # read arguments from command line parameters
@@ -90,6 +92,10 @@ class UCSAgent(object):
         parser.add_argument("-c", "--ucs", nargs="?", type=str, default=conf.UCS,
                             help="""IP or host name of unified computing system managed server.
                                     \n(default: %s)""" % conf.UCS)
+
+        parser.add_argument("-C", "--Count", nargs="?", type=str,
+                            default=conf.COUNT,
+                            help="Count of records in one log list. \n(default: %s)" % conf.COUNT)
 
         parser.add_argument("-u", "--user", nargs="?", type=str,
                             default=conf.UCS_USER,
@@ -139,7 +145,7 @@ class UCSAgent(object):
         # check name: All log names must have only letter and numbers
         if re.match('^[A-Za-z0-9]+$', name):
             # send log to zeus.
-            return self.zeus_client.sendLog(name, [msg])
+            return self.zeus_client.sendLog(name, msg)
         else:
             self.logger.error("""Name error: %s.
                               All log names must have only letter
@@ -152,7 +158,7 @@ class UCSAgent(object):
             self.logger._log(level, msg, args)
 
         # submit data to zeus
-        return self.submit(msg)
+        return self.submit(msg, name)
 
     def to_json(self, dn):
         # return the json dict
@@ -185,6 +191,7 @@ class UCSAgent(object):
             return dict
 
     def get_dn_conf(self):
+        log_list = []
         for class_id in self.class_ids:
             xml_req = ucsmethodfactory.config_find_dns_by_class_id(
                 self.handler.cookie, class_id, in_filter=None)
@@ -192,10 +199,22 @@ class UCSAgent(object):
 
             for dn in self.dn_obj_list:
                 dn_config = self.handler.query_dn(dn.value)
+                log_list.append(self.to_json(dn_config))
+                # self.dn_set.add(dn.value)
 
                 # use the self.to_json temporary until ucsmsdk provides this method.
-                self.add_log("info", dn._class_id, msg=self.to_json(dn_config))
-                self.dn_set.add(dn.value)
+                self.len = len(log_list)
+                if self.len >= self.args.Count:
+                    self.add_log("DEBUG", "ucs", log_list)
+                    log_list = []
+                    self.count += self.len
+                    self.logger.info("%s configuration records sent." % self.count)
+
+        if self.len:
+            self.add_log("DEBUG", "ucs", log_list)
+            self.count += self.len
+            self.logger.info("%s configuration records sent." % self.count)
+
 
     def submit_async_events(self, response):
         self.event_string += response
@@ -207,7 +226,7 @@ class UCSAgent(object):
                 event = event_str[:length]
 
                 # convert xml str to json and send to zeus.
-                self.add_log("info", "event", json.dumps(xmltodict.parse(event)))
+                self.add_log("DEBUG", "ucs", json.dumps(xmltodict.parse(event)))
 
                 # new event string starts from the end of last event.
                 self.event_string = event_str[length:]
@@ -232,7 +251,7 @@ class UCSAgent(object):
     def unsubscribe_events(self):
         xml_req = ucsmethodfactory.event_unsubscribe(self.handler.cookie)
         res = self.handler.process_xml_elem(xml_req)
-        self.add_log("info", res._class_id, msg=self.to_json(res))
+        self.add_log("info", "ucs", msg=self.to_json(res))
 
     def event_loop(self):
         # Maintain a client to listen to UCS's async notification.
@@ -273,7 +292,7 @@ class UCSAgent(object):
                                  port=self.args.port, secure=self.args.secure)
         # login to ucs
         self.handler.login(auto_refresh=True)
-        self.add_log("info", "aaaLogin",
+        self.add_log("info", "ucs",
                      msg={"User": self.user, "Password": self.passwd,
                           "cookie": self.handler.cookie})
         self.get_dn_conf()
@@ -281,7 +300,7 @@ class UCSAgent(object):
 
     def close(self):
         self.handler.logout()
-        self.add_log('info', 'aaaLogout',
+        self.add_log('info', "ucs",
                      msg={"User": self.user, "Password": self.passwd,
                           "cookie": self.handler.cookie})
 
